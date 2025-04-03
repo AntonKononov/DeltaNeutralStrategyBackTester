@@ -1,0 +1,150 @@
+antonkononov@MacBook-Pro-Anton backTests % npm run dev
+
+> backtester@1.0.0 dev
+> ts-node-dev --respawn src/index.ts
+
+[INFO] 13:19:07 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.8.2)
+Starting script...
+... Vadym Block Data ...
+... NoPrice - 20%
+... rebalancesExecuted 698
+... volatileSwapVolume 5902.58903996873
+... volatileSwapVolumeInStable 3387.575115751497
+... shortAvgPrice 0.5084276738458116
+... userFees 8.59944857513419
+... protocolFees 2.1498621437835475
+... last TVL 113.85038367122735
+... =================
+... WithPrice - 20%
+... rebalancesExecuted 208
+... volatileSwapVolume 3325.9125020403553
+... volatileSwapVolumeInStable 1886.8716914543493
+... shortAvgPrice 0.5031981821721596
+... userFees 8.51976981802622
+... protocolFees 2.129942454506555
+... last TVL 104.40967144067167
+... =================
+... DynamicThreshold - 20%
+... rebalancesExecuted 1798
+... volatileSwapVolume 8740.51103246068
+... volatileSwapVolumeInStable 4937.470043421458
+... shortAvgPrice 0.49522866043722985
+... userFees 8.54164209949192
+... protocolFees 2.13541052487298
+... last TVL 121.44160528799803
+... =================
+... ShortAvgPrice - 20%
+... rebalancesExecuted 108
+... volatileSwapVolume 1309.1271981164261
+... volatileSwapVolumeInStable 624.1280844181986
+... last TVL 94.79318045122307
+... =================
+
+... Vadym Block Data With Random ...
+... NoPrice - 20%
+... rebalancesExecuted 141
+... volatileSwapVolume 2118.4829082036426
+... volatileSwapVolumeInStable 1184.1227347245413
+... shortAvgPrice 0.49743672919756377
+... userFees 8.534679460629114
+... protocolFees 2.1336698651572785
+... last TVL 100.95872247739435
+... =================
+... WithPrice - 20%
+... rebalancesExecuted 74
+... volatileSwapVolume 1473.235307399092
+... volatileSwapVolumeInStable 852.5285315425936
+... shortAvgPrice 0.5034336536940964
+... userFees 8.323864127267598
+... protocolFees 2.0809660318168994
+... last TVL 99.13035996305081
+... =================
+... DynamicThreshold - 20%
+... rebalancesExecuted 194
+... volatileSwapVolume 2280.085889380574
+... volatileSwapVolumeInStable 1287.3425039028486
+... shortAvgPrice 0.4948626374572739
+... userFees 8.623189310545671
+... protocolFees 2.1557973276364177
+... last TVL 102.68595444127084
+... =================
+... ShortAvgPrice - 20%
+... rebalancesExecuted 43
+... volatileSwapVolume 783.8315446708639
+... volatileSwapVolumeInStable 363.7304910237011
+... last TVL 101.13314883361299
+... =================
+
+... Strategies Server Data ...
+... NoPrice - 20%
+... rebalancesExecuted 34
+... volatileSwapVolume 434.7079223556286
+... volatileSwapVolumeInStable 224.41372651154103
+... shortAvgPrice 0.5201815264039276
+... userFees 1.4700533584545463
+... protocolFees 0.3675133396136366
+... last TVL 101.71757912200353
+... =================
+... WithPrice - 20%
+... rebalancesExecuted 10
+... volatileSwapVolume 176.45041392727742
+... volatileSwapVolumeInStable 90.83887275433528
+... shortAvgPrice 0.5166561542258054
+... userFees 1.333035228751831
+... protocolFees 0.33325880718795775
+... last TVL 102.24070967140935
+... =================
+... DynamicThreshold - 20%
+... rebalancesExecuted 100
+... volatileSwapVolume 687.9509543820774
+... volatileSwapVolumeInStable 353.362758628942
+... shortAvgPrice 0.522777507234948
+... userFees 1.465139507339275
+... protocolFees 0.36628487683481875
+... last TVL 102.35149258533667
+... =================
+... ShortAvgPrice - 20%
+... rebalancesExecuted 7
+... volatileSwapVolume 108.13485085507008
+... volatileSwapVolumeInStable 53.62347918973872
+... last TVL 101.09031756308212
+... =================
+
+... Strategies Server Data With Random ...
+... NoPrice - 20%
+... rebalancesExecuted 29
+... volatileSwapVolume 425.8930565765983
+... volatileSwapVolumeInStable 221.16175620376865
+... shortAvgPrice 0.5198793222437731
+... userFees 1.4659793562195906
+... protocolFees 0.36649483905489766
+... last TVL 101.14169682720129
+... =================
+... WithPrice - 20%
+... rebalancesExecuted 6
+... volatileSwapVolume 165.81278752071896
+... volatileSwapVolumeInStable 85.2824249440713
+... shortAvgPrice 0.5082232520041107
+... userFees 1.3277289437302313
+... protocolFees 0.33193223593255783
+... last TVL 100.90862096983538
+... =================
+... DynamicThreshold - 20%
+... rebalancesExecuted 62
+... volatileSwapVolume 613.2148681460864
+... volatileSwapVolumeInStable 315.49625485116457
+... shortAvgPrice 0.522074518988694
+... userFees 1.4569731027698891
+... protocolFees 0.3642432756924723
+... last TVL 101.01051916929745
+... =================
+... ShortAvgPrice - 20%
+... rebalancesExecuted 7
+... volatileSwapVolume 129.5317194297615
+... volatileSwapVolumeInStable 64.03107085023422
+... last TVL 101.1306551099278
+... =================
+
+Stopping script...
+^C
+antonkononov@MacBook-Pro-Anton backTests % 
