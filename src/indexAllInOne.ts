@@ -1,16 +1,22 @@
 import fs from "fs";
-import {
-  WAGMI_FACTORY_ADDRESS,
-  STABLE_TOKEN_ADDRESS,
-  VOLATILE_TOKEN_ADDRESS,
-  IS_STABLE_TOKEN_0,
-  STABLE_TOKEN_DECIMALS,
-  VOLATILE_TOKEN_DECIMALS,
-} from "./utils/constants";
+import { Contract, ethers } from "ethers";
+
 import { WagmiFactory } from "./utils/abi/WagmiFactory";
 import { WagmiMultipool } from "./utils/abi/WagmiMultipool";
 import { WagmiStrategyMultipool } from "./utils/abi/WagmiStrategyMultipool";
-import { getContract } from "./utils/helpers";
+
+const STABLE_TOKEN_ADDRESS = "0x29219dd400f2Bf60E5a23d13Be72B486D4038894";
+const VOLATILE_TOKEN_ADDRESS = "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38";
+
+const IS_STABLE_TOKEN_0 =
+  STABLE_TOKEN_ADDRESS.toLowerCase() < VOLATILE_TOKEN_ADDRESS.toLowerCase();
+
+const STABLE_TOKEN_DECIMALS = 6;
+const VOLATILE_TOKEN_DECIMALS = 18;
+
+const PROVIDER_URL = "https://rpc.soniclabs.com/";
+
+const WAGMI_FACTORY_ADDRESS = "0x86fd613d79cea7ce51defd31bfcf68adbf4038fa";
 
 interface StrategyInfo {
   poolAddress: string;
@@ -27,6 +33,18 @@ interface StrategyInfo {
   currentTickPrice: number;
   currentSqrtRatioX96Price: number;
 }
+
+const getProvider = (): ethers.JsonRpcProvider => {
+  const provider = new ethers.JsonRpcProvider(PROVIDER_URL);
+
+  return provider;
+};
+
+const getContract = (abi: any[], target: string): Contract => {
+  const contract = new Contract(target, abi, getProvider());
+
+  return contract;
+};
 
 const saveDataToFile = (data: any[], fileName: string) => {
   try {
