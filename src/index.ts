@@ -222,8 +222,6 @@ const calculateNoPriceStrategyTVLs = (
     let currentStablePrice = Number(data.stablePrice);
     let currentVolatilePrice = Number(data.volatilePrice);
 
-    let currentStableFee = 0;
-    let currentVolatileFee = 0;
     let isRebalanceNecessary = false;
     if (index !== 0) {
       const timeDifference = Number(
@@ -231,21 +229,21 @@ const calculateNoPriceStrategyTVLs = (
           getTimestamp(historicalData[index - 1].timestamp)
       );
 
-      currentStableFee =
+      stableFees +=
         (wagmiPositionStable *
           WAGMI_FEES *
           timeDifference *
           (MAX_BP - PROTOCOL_FEES)) /
-        MAX_BP;
-      stableFees += currentStableFee;
+        MAX_BP /
+        2;
 
-      currentVolatileFee =
+      volatileFees +=
         (wagmiPositionVolatile *
           WAGMI_FEES *
           timeDifference *
           (MAX_BP - PROTOCOL_FEES)) /
-        MAX_BP;
-      volatileFees += currentVolatileFee;
+        MAX_BP /
+        2;
 
       if (useHistoricalData) {
         // const [wagmiStableDeviation, wagmiVolatileDeviation] =
@@ -270,8 +268,8 @@ const calculateNoPriceStrategyTVLs = (
       // const [wagmiStableDeviation, wagmiVolatileDeviation] =
       //   calculateWagmiDeviationNew(data, historicalData[index - 1]);
 
-      wagmiPositionStable -= currentStableFee;
-      wagmiPositionVolatile -= currentVolatileFee;
+      wagmiPositionStable -= stableFees;
+      wagmiPositionVolatile -= volatileFees;
 
       siloPositionBorrowed += siloPositionBorrowed * SILO_FEES * timeDifference;
 
@@ -350,8 +348,8 @@ const calculateNoPriceStrategyTVLs = (
           stableBalance += feesInStableForUsers + slippageAmount * random;
         }
       } else {
-        wagmiPositionStable += currentStableFee;
-        wagmiPositionVolatile += currentVolatileFee;
+        wagmiPositionStable += stableFees;
+        wagmiPositionVolatile += volatileFees;
       }
     }
 
@@ -413,18 +411,18 @@ const startBT = (
 
 const main = () => {
   console.log("Starting script...");
-  // // Block Data
-  // // {->
-  // {
-  //   console.log("... Vadym Block Data ...");
-  //   let folderName = "blockData/NoRandom";
-  //   [2, 5, 7].map((value) => {
-  //     console.log("\n");
-  //     REBALANCE_THRESHOLD = value;
-  //     startBT(blockHistoricalData, folderName);
-  //   });
-  // }
-  // // <-}
+  // Block Data
+  // {->
+  {
+    console.log("... Vadym Block Data ...");
+    let folderName = "blockData/NoRandom";
+    [2, 5, 7].map((value) => {
+      console.log("\n");
+      REBALANCE_THRESHOLD = value;
+      startBT(blockHistoricalData, folderName);
+    });
+  }
+  // <-}
 
   // Strategies Server Strategies Data
   // {->
