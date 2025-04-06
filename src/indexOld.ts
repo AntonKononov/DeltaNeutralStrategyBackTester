@@ -1,7 +1,6 @@
 import fs from "fs";
 
-import { historicalData as wagmiBlockHistoricalData } from "./data/initialData/WagmiInfo";
-import { historicalData as wagmiBlockStrategyInfo } from "./data/initialData/StrategyInfo";
+import { historicalData as blockHistoricalData } from "./data/initialData/StrategyInfo";
 
 interface TvlData {
   timestamp: number;
@@ -215,18 +214,16 @@ const calculateNoPriceStrategyTVLs = (
   let volatileFees = 0;
 
   historicalData.forEach((data, index) => {
-    let currentStablePrice = Number(1);
-    let currentVolatilePrice = Number(
-      data.strategy_info[0].currentSqrtRatioX96Price
-    );
+    let currentStablePrice = Number(data.stablePrice);
+    let currentVolatilePrice = Number(data.volatilePrice);
 
     let currentStableFee = 0;
     let currentVolatileFee = 0;
     let isRebalanceNecessary = false;
     if (index !== 0) {
       const timeDifference = Number(
-        getTimestamp(data.block_timestamp) -
-          getTimestamp(historicalData[index - 1].block_timestamp)
+        getTimestamp(data.timestamp) -
+          getTimestamp(historicalData[index - 1].timestamp)
       );
 
       currentStableFee =
@@ -245,44 +242,50 @@ const calculateNoPriceStrategyTVLs = (
         MAX_BP;
       volatileFees += currentVolatileFee;
 
-      siloPositionBorrowed += siloPositionBorrowed * SILO_FEES * timeDifference;
+      if (useHistoricalData) {
+        // const [wagmiStableDeviation, wagmiVolatileDeviation] =
+        //   calculateWagmiDeviationNew(data, historicalData[index - 1]);
+        // wagmiPositionStable *= wagmiStableDeviation;
+        // wagmiPositionVolatile *= wagmiVolatileDeviation;
 
-      const wagmiTvlInStable =
-        wagmiPositionStable + wagmiPositionVolatile * currentVolatilePrice;
+        // wagmiPositionStable = Number(data.myStableTokens);
+        // wagmiPositionVolatile = Number(data.myVolatileTokens);
 
-      let hedgeAmount = 0;
-      for (let strategy of data.strategy_info) {
-        const poolTvlInStable = (wagmiTvlInStable * strategy.weight) / 10000;
-
-        const numerator =
-          Math.sqrt(strategy.upperPrice / currentVolatilePrice) - 1;
-        const denominator =
-          Math.sqrt(strategy.upperPrice / strategy.lowerPrice) - 1;
-
-        const delta = numerator / denominator;
-
-        let poolNeededToHedge = poolTvlInStable * delta; // / currentVolatilePrice;
-
-        hedgeAmount += poolNeededToHedge;
+        const [wagmiStableDeviation, wagmiVolatileDeviation] =
+          calculateWagmiDeviationCombined(data, historicalData[index - 1]);
+        wagmiPositionStable *= wagmiStableDeviation;
+        wagmiPositionVolatile *= wagmiVolatileDeviation;
+      } else {
+        const [wagmiStableDeviation, wagmiVolatileDeviation] =
+          calculateWagmiDeviationReserves(data, historicalData[index - 1]);
+        wagmiPositionStable *= wagmiStableDeviation;
+        wagmiPositionVolatile *= wagmiVolatileDeviation;
       }
 
-      const isRebalanceDown = hedgeAmount > siloPositionBorrowed;
+      wagmiPositionStable -= currentStableFee;
+      wagmiPositionVolatile -= currentVolatileFee;
+
+      siloPositionBorrowed += siloPositionBorrowed * SILO_FEES * timeDifference;
+
+      const isRebalanceDown = wagmiPositionVolatile > siloPositionBorrowed;
       const volatileHedgeDifference = isRebalanceDown
-        ? hedgeAmount - siloPositionBorrowed
-        : siloPositionBorrowed - hedgeAmount;
+        ? wagmiPositionVolatile - siloPositionBorrowed
+        : siloPositionBorrowed - wagmiPositionVolatile;
 
       isRebalanceNecessary =
         volatileHedgeDifference >=
         (siloPositionBorrowed * REBALANCE_THRESHOLD) / MAX_BP;
+        
 
       if (isRebalanceNecessary) {
         const volatileHedgeDifferenceInStable =
-          volatileHedgeDifference * currentVolatilePrice;
+          (volatileHedgeDifference * currentVolatilePrice) / currentStablePrice;
 
         rebalancesExecuted += 1;
         volatileSwapVolume += volatileHedgeDifference;
         volatileSwapVolumeInStable += volatileHedgeDifferenceInStable;
 
+        // claim fees
         const feesInStable =
           stableFees +
           (volatileFees * currentVolatilePrice) / currentStablePrice;
@@ -292,6 +295,7 @@ const calculateNoPriceStrategyTVLs = (
         userFees += feesInStableForUsers;
         protocolFees += (feesInStable * PROTOCOL_FEES) / MAX_BP;
 
+        // reset fees
         stableFees = 0;
         volatileFees = 0;
 
@@ -342,7 +346,7 @@ const calculateNoPriceStrategyTVLs = (
       (siloPositionBorrowed * currentVolatilePrice) / currentStablePrice;
 
     tvlData.push({
-      timestamp: data.block_timestamp,
+      timestamp: data.timestamp,
       tvl: tvl,
       wagmiPositionStable: wagmiPositionStable,
       wagmiPositionVolatile: wagmiPositionVolatile,
@@ -379,13 +383,12 @@ const calculateNoPriceStrategyTVLs = (
 };
 
 const startBT = (
-  wagmiData: any[],
   data: any[],
   folderName: string,
   useHistoricalData: boolean = true,
   withRandom: boolean = false
 ) => {
-  calculateInitialAmounts(wagmiData);
+  calculateInitialAmounts(data);
 
   calculateNoPriceStrategyTVLs(data, folderName, useHistoricalData, withRandom);
 };
@@ -397,10 +400,10 @@ const main = () => {
   {
     console.log("... Vadym Block Data ...");
     let folderName = "blockData/NoRandom";
-    [10, 20, 30, 40, 50].map((value) => {
+    [2, 5, 7].map((value) => {
       console.log("\n");
       REBALANCE_THRESHOLD = value;
-      startBT(wagmiBlockHistoricalData, wagmiBlockStrategyInfo, folderName);
+      startBT(blockHistoricalData, folderName);
     });
   }
   // <-}
