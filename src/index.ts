@@ -90,7 +90,7 @@ const calculateInitialAmounts = (
   // console.log("currentShortAvgPrice", currentShortAvgPrice);
 };
 
-const calculateWagmiDeviation = (
+const calculateWagmiDeviationReserves = (
   currentWagmiHistoricalData: any,
   previousWagmiHistoricalData: any
 ) => {
@@ -105,7 +105,7 @@ const calculateWagmiDeviation = (
   return [wagmiStableDeviation, wagmiVolatileDeviation];
 };
 
-const calculateWagmiDeviationNew = (
+const calculateWagmiDeviationRates = (
   currentWagmiHistoricalData: any,
   previousWagmiHistoricalData: any
 ) => {
@@ -247,7 +247,7 @@ const calculateNoPriceStrategyTVLs = (
 
       if (useHistoricalData) {
         // const [wagmiStableDeviation, wagmiVolatileDeviation] =
-        //   calculateWagmiDeviationNew(data, historicalData[index - 1]);
+        //   calculateWagmiDeviationRates(data, historicalData[index - 1]);
         // wagmiPositionStable *= wagmiStableDeviation;
         // wagmiPositionVolatile *= wagmiVolatileDeviation;
 
@@ -260,13 +260,13 @@ const calculateNoPriceStrategyTVLs = (
         wagmiPositionVolatile *= wagmiVolatileDeviation;
       } else {
         const [wagmiStableDeviation, wagmiVolatileDeviation] =
-          calculateWagmiDeviation(data, historicalData[index - 1]);
+        calculateWagmiDeviationReserves(data, historicalData[index - 1]);
         wagmiPositionStable *= wagmiStableDeviation;
         wagmiPositionVolatile *= wagmiVolatileDeviation;
       }
 
       // const [wagmiStableDeviation, wagmiVolatileDeviation] =
-      //   calculateWagmiDeviationNew(data, historicalData[index - 1]);
+      //   calculateWagmiDeviationRates(data, historicalData[index - 1]);
 
       wagmiPositionStable -= stableFees;
       wagmiPositionVolatile -= volatileFees;
