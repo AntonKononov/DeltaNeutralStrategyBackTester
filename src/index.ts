@@ -70,6 +70,8 @@ const calculateInitialAmounts = (
         Number(initialData.stablePrice)) /
       Number(initialData.volatilePrice);
 
+    currentStableBalance = 0;
+    currentVolatileBalance = 0;
     currentShortAvgPrice = Number(initialData.volatilePrice);
   } else {
     currentWagmiPositionStable = Number(initialData.wagmiReserveStable);
@@ -260,7 +262,7 @@ const calculateNoPriceStrategyTVLs = (
         wagmiPositionVolatile *= wagmiVolatileDeviation;
       } else {
         const [wagmiStableDeviation, wagmiVolatileDeviation] =
-        calculateWagmiDeviationReserves(data, historicalData[index - 1]);
+          calculateWagmiDeviationReserves(data, historicalData[index - 1]);
         wagmiPositionStable *= wagmiStableDeviation;
         wagmiPositionVolatile *= wagmiVolatileDeviation;
       }
@@ -385,6 +387,10 @@ const calculateNoPriceStrategyTVLs = (
   console.log("... userFees", userFees);
   console.log("... protocolFees", protocolFees);
   console.log("... last TVL", tvlData[tvlData.length - 1].tvl);
+  console.log(
+    "... last stable balance",
+    tvlData[tvlData.length - 1].stableBalance
+  );
   console.log("... =================");
 
   saveDataToFile(
