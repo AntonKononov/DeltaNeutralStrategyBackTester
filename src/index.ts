@@ -68,7 +68,8 @@ const calculateInitialAmounts = (
       (((currentSiloPositionCollateral * SILO_SAFE_LTV) / MAX_BP) *
         Number(initialData.stablePrice)) /
       Number(initialData.volatilePrice);
-
+    currentStableBalance = 0;
+    currentVolatileBalance = 0;
     currentShortAvgPrice = Number(initialData.volatilePrice);
   } else {
     currentWagmiPositionStable = Number(initialData.wagmiReserveStable);
@@ -220,8 +221,6 @@ const calculateNoPriceStrategyTVLs = (
       data.strategy_info[0].currentSqrtRatioX96Price
     );
 
-    let currentStableFee = 0;
-    let currentVolatileFee = 0;
     let isRebalanceNecessary = false;
     if (index !== 0) {
       const timeDifference = Number(
@@ -229,21 +228,24 @@ const calculateNoPriceStrategyTVLs = (
           getTimestamp(historicalData[index - 1].block_timestamp)
       );
 
-      currentStableFee =
+      stableFees +=
         (wagmiPositionStable *
           WAGMI_FEES *
           timeDifference *
           (MAX_BP - PROTOCOL_FEES)) /
-        MAX_BP;
-      stableFees += currentStableFee;
+        MAX_BP /
+        2;
 
-      currentVolatileFee =
+      volatileFees +=
         (wagmiPositionVolatile *
           WAGMI_FEES *
           timeDifference *
           (MAX_BP - PROTOCOL_FEES)) /
-        MAX_BP;
-      volatileFees += currentVolatileFee;
+        MAX_BP /
+        2;
+
+      wagmiPositionStable -= stableFees;
+      wagmiPositionVolatile -= volatileFees;
 
       siloPositionBorrowed += siloPositionBorrowed * SILO_FEES * timeDifference;
 
@@ -328,8 +330,8 @@ const calculateNoPriceStrategyTVLs = (
           stableBalance += feesInStableForUsers + slippageAmount * random;
         }
       } else {
-        wagmiPositionStable += currentStableFee;
-        wagmiPositionVolatile += currentVolatileFee;
+        wagmiPositionStable += stableFees;
+        wagmiPositionVolatile += volatileFees;
       }
     }
 
@@ -409,3 +411,5 @@ const main = () => {
 };
 
 main();
+
+// NODE_OPTIONS="--max-old-space-size=8192" npm run dev
